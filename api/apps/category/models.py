@@ -1,9 +1,9 @@
 from django.db import models
 
-from api.apps.user import User
+from api.apps.user.models import User
 
 
-class Category(models.model):
+class Category(models.Model):
     name = models.CharField(max_length=100)
     detailed_name = models.CharField(max_length=100)
 
@@ -18,7 +18,7 @@ class Category(models.model):
         ]
 
 
-class UserCategory(models.model):
+class UserCategory(models.Model):
     name = models.CharField(max_length=100)
     detailed_name = models.CharField(max_length=100)
     user_id = models.ForeignKey(
