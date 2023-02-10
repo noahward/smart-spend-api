@@ -11,6 +11,7 @@ class Category(models.Model):
         return str(self.name)
 
     class Meta:
+        verbose_name_plural = "Categories"
         constraints = [
             models.UniqueConstraint(
                 fields=["name", "detailed_name"], name="unique_category"
@@ -29,6 +30,7 @@ class UserCategory(models.Model):
         return str(self.name)
 
     class Meta:
+        verbose_name_plural = "User Categories"
         constraints = [
             models.UniqueConstraint(
                 fields=["user_id", "name", "detailed_name"], name="unique_user_category"
