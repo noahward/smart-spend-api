@@ -15,4 +15,5 @@ class TransactionSerializer(serializers.ModelSerializer):
             "user_id",
             "account_id",
             "category_id",
+            "user_category_id",
         ]
