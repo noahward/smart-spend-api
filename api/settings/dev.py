@@ -29,3 +29,5 @@ DATABASES = {
         "port": env("DB_PORT"),
     }
 }
+
+CORS_ALLOW_ALL_ORIGINS = True

@@ -3,3 +3,4 @@ pre-commit
 flake8
 isort
 black
+django-cors-headers
