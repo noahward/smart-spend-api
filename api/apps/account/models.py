@@ -4,7 +4,7 @@ from api.apps.user.models import User
 
 
 class Account(models.Model):
-    type_choices = ("spending", "saving")
+    type_choices = (("spending", "spending"), ("saving", "saving"))
 
     name = models.CharField(max_length=100)
     nickname = models.CharField(max_length=100, null=True, blank=True)
