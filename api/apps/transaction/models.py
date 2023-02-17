@@ -2,7 +2,7 @@ from django.db import models
 
 from api.apps.user.models import User
 from api.apps.account.models import Account
-from api.apps.category.models import Category, UserCategory
+from api.apps.category.models import Category
 
 
 class Transaction(models.Model):
@@ -14,9 +14,6 @@ class Transaction(models.Model):
     account_id = models.ForeignKey(Account, on_delete=models.CASCADE)
     category_id = models.ForeignKey(
         Category, on_delete=models.CASCADE, null=True, blank=True
-    )
-    user_category_id = models.ForeignKey(
-        UserCategory, on_delete=models.CASCADE, null=True, blank=True
     )
 
     def __str__(self):
