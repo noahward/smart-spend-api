@@ -19,6 +19,7 @@ from django.contrib import admin
 
 from api.apps.user.views import MainUser, LoginView, RegisterView
 from api.apps.account.views import AccountList
+from api.apps.category.views import CategoryList
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -28,4 +29,5 @@ urlpatterns = [
     path("auth/logout", knox_views.LogoutView.as_view(), name="knox-logout"),
     path("auth/user", MainUser.as_view()),
     path("accounts", AccountList.as_view()),
+    path("categories", CategoryList.as_view()),
 ]
