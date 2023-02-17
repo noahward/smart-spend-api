@@ -6,6 +6,13 @@ from .serializers import AccountSerializer
 
 
 class AccountList(generics.ListCreateAPIView):
-    permission_classes = [IsAuthenticated]
-    queryset = Account.objects.all()
+    model = Account
     serializer_class = AccountSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Account.objects.filter(user=user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)

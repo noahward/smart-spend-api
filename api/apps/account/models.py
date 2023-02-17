@@ -4,17 +4,17 @@ from api.apps.user.models import User
 
 
 class Account(models.Model):
-    type_choices = (("spending", "spending"), ("saving", "saving"))
+    kind_choices = (("spending", "spending"), ("saving", "saving"))
 
     name = models.CharField(max_length=100)
     nickname = models.CharField(max_length=100, null=True, blank=True)
-    kind = models.CharField(max_length=100, choices=type_choices)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name="accounts")
+    kind = models.CharField(max_length=100, choices=kind_choices)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="accounts")
 
     def __str__(self):
         return str(self.name)
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=["name", "user_id"], name="unique_account")
+            models.UniqueConstraint(fields=["name", "user"], name="unique_account")
         ]
