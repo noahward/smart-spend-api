@@ -19,7 +19,7 @@ from django.contrib import admin
 
 from api.apps.user.views import MainUser, LoginView, RegisterView
 from api.apps.account.views import AccountList, AccountDetail
-from api.apps.category.views import CategoryList
+from api.apps.category.views import CategoryList, CategoryDetail
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -31,4 +31,5 @@ urlpatterns = [
     path("accounts", AccountList.as_view()),
     path("accounts/<int:pk>", AccountDetail.as_view()),
     path("categories", CategoryList.as_view()),
+    path("categories/<int:pk>", CategoryDetail.as_view()),
 ]
