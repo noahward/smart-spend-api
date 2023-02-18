@@ -1,4 +1,5 @@
 from rest_framework import generics
+from django.db.models import Q
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Category
@@ -12,7 +13,7 @@ class CategoryList(generics.ListCreateAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return Category.objects.filter(user=user)
+        return Category.objects.filter(Q(user__isnull=True) | Q(user=user))
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
