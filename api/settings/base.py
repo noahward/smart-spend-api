@@ -1,4 +1,5 @@
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -90,4 +91,9 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": ("knox.auth.TokenAuthentication",),
 }
 
-REST_KNOX = {"USER_SERIALIZER": "user.serializers.UserSerializer"}
+REST_KNOX = {
+    "USER_SERIALIZER": "user.serializers.UserSerializer",
+    "TOKEN_TTL": timedelta(hours=1),
+    "TOKEN_LIMIT_PER_USER": 1,
+    "AUTO_REFRESH": True,
+}
