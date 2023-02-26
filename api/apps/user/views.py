@@ -8,17 +8,17 @@ from .serializers import UserSerializer, LoginUserSerializer, CreateUserSerializ
 class RegisterView(generics.GenericAPIView):
     serializer_class = CreateUserSerializer
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        token = AuthToken.objects.create(user)
+        token_instance = AuthToken.objects.create(user)
         return Response(
             {
-                "user": UserSerializer(
+                "profile": UserSerializer(
                     user, context=self.get_serializer_context()
                 ).data,
-                "token": token[1],
+                "token": {"key": token_instance[1], "expiry": token_instance[0].expiry},
             }
         )
 
@@ -30,12 +30,13 @@ class LoginView(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data
+        token_instance = AuthToken.objects.create(user)
         return Response(
             {
-                "user": UserSerializer(
+                "profile": UserSerializer(
                     user, context=self.get_serializer_context()
                 ).data,
-                "token": AuthToken.objects.create(user)[1],
+                "token": {"key": token_instance[1], "expiry": token_instance[0].expiry},
             }
         )
 
