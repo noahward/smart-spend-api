@@ -96,4 +96,5 @@ REST_KNOX = {
     "TOKEN_TTL": timedelta(hours=1),
     "TOKEN_LIMIT_PER_USER": 1,
     "AUTO_REFRESH": True,
+    "MIN_REFRESH_INTERVAL": 60,
 }
