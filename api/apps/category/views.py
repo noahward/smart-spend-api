@@ -10,7 +10,7 @@ from .serializers import CategorySerializer
 
 class CategoryList(generics.ListCreateAPIView):
     model = Category
-    pk_url_kwarg = "cid"
+    lookup_url_kwarg = "cid"
     serializer_class = CategorySerializer
     permission_classes = [IsAuthenticated]
 
@@ -24,6 +24,6 @@ class CategoryList(generics.ListCreateAPIView):
 
 class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     model = Category
-    pk_url_kwarg = "cid"
+    lookup_url_kwarg = "cid"
     serializer_class = CategorySerializer
     permission_classes = [IsAuthenticated, IsOwner]

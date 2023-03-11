@@ -34,5 +34,5 @@ urlpatterns = [
     path("accounts/<int:aid>/transactions", TransactionList.as_view()),
     path("accounts/<int:aid>/transactions/<int:tid>", TransactionDetail.as_view()),
     path("categories", CategoryList.as_view()),
-    path("categories/<int:cig>", CategoryDetail.as_view()),
+    path("categories/<int:cid>", CategoryDetail.as_view()),
 ]

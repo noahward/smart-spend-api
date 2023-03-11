@@ -9,7 +9,7 @@ from .serializers import AccountSerializer
 
 class AccountList(generics.ListCreateAPIView):
     model = Account
-    pk_url_kwarg = "aid"
+    lookup_url_kwarg = "aid"
     serializer_class = AccountSerializer
     permission_classes = [IsAuthenticated]
 
@@ -22,7 +22,7 @@ class AccountList(generics.ListCreateAPIView):
 
 
 class AccountDetail(generics.RetrieveUpdateDestroyAPIView):
-    model = Account
-    pk_url_kwarg = "aid"
+    queryset = Account.objects.all()
+    lookup_url_kwarg = "aid"
     serializer_class = AccountSerializer
     permission_classes = [IsAuthenticated, IsOwner]
