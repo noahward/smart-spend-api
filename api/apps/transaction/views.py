@@ -28,11 +28,12 @@ class TransactionList(generics.ListCreateAPIView):
             names=["date", "description", "withdrawal", "deposit", "new_balance"],
         )
         df[["withdrawal", "deposit"]] = df[["withdrawal", "deposit"]].fillna(value=0)
+        # TODO: Don't hardcode currency
         df["currency_code"] = "CAD"
-        df["account"] = Account.objects.get(id=self.kwargs.get("aid"))
+        df["account"] = self.kwargs.get("aid")
         df["amount"] = df["deposit"] - df["withdrawal"]
-        df["date"] = pd.to_datetime(df["date"], infer_datetime_format=True)
-        df["user"] = self.request.user
+        df["date"] = pd.to_datetime(df["date"], infer_datetime_format=True).dt.date
+        df["user"] = self.request.user.id
         df = df.drop(columns=["withdrawal", "deposit", "new_balance"])
 
         transaction_list = df.to_dict(orient="records")
