@@ -7,3 +7,4 @@ knox==0.1.14
 setuptools==65.7.0
 mysqlclient==2.1.1
 pandas==1.5.3
+pandera==0.14.3
