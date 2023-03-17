@@ -1,8 +1,10 @@
 import os
+import logging
 
 import environ
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.logging import LoggingIntegration
 
 from .base import *
 
@@ -33,6 +35,11 @@ DATABASES = {
 }
 
 # Sentry logging
+sentry_logging = LoggingIntegration(
+    level=logging.INFO,  # Capture info and above as breadcrumbs
+    event_level=logging.ERROR,  # Send errors as events
+)
+
 sentry_sdk.init(
     dsn=env("SENTRY_DSN"),
     integrations=[
@@ -41,6 +48,7 @@ sentry_sdk.init(
             middleware_spans=True,
             signals_spans=False,
         ),
+        sentry_logging,
     ],
     traces_sample_rate=1.0,
     send_default_pii=True,
