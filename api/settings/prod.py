@@ -1,6 +1,8 @@
 import os
 
 import environ
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 from .base import *
 
@@ -29,3 +31,18 @@ DATABASES = {
         "port": env("DB_PORT"),
     }
 }
+
+# Sentry logging
+sentry_sdk.init(
+    dsn=env("SENTRY_DSN"),
+    integrations=[
+        DjangoIntegration(
+            transaction_style="url",
+            middleware_spans=True,
+            signals_spans=False,
+        ),
+    ],
+    traces_sample_rate=1.0,
+    send_default_pii=True,
+    environment="production",
+)
