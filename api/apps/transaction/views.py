@@ -34,7 +34,11 @@ class TransactionList(generics.ListCreateAPIView):
         df[["withdrawal", "deposit", "new_balance"]] = df[
             ["withdrawal", "deposit", "new_balance"]
         ].fillna(value=0)
-        df["date"] = pd.to_datetime(df["date"], infer_datetime_format=True)
+
+        try:
+            df["date"] = pd.to_datetime(df["date"], infer_datetime_format=True)
+        except pd.errors.OutOfBoundsDatetime:
+            raise APIException("Unable to parse the date column")
 
         try:
             schema.validate(df)
