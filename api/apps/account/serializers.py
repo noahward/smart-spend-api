@@ -4,6 +4,8 @@ from .models import Account
 
 
 class AccountSerializer(serializers.ModelSerializer):
+    balance = serializers.ReadOnlyField()
+
     class Meta:
         model = Account
-        fields = ["id", "name", "nickname", "kind", "amount"]
+        fields = ["id", "name", "nickname", "kind", "balance"]
