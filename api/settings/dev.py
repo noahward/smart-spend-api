@@ -52,4 +52,7 @@ sentry_sdk.init(
         ),
         sentry_logging,
     ],
+    traces_sample_rate=1.0,
+    send_default_pii=True,
+    environment="development",
 )
