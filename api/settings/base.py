@@ -89,6 +89,7 @@ AUTH_USER_MODEL = "user.User"
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": ("knox.auth.TokenAuthentication",),
+    "COERCE_DECIMAL_TO_STRING": False,
 }
 
 REST_KNOX = {
