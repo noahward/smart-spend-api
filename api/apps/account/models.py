@@ -11,7 +11,7 @@ class Account(models.Model):
     nickname = models.CharField(max_length=100, null=True, blank=True)
     kind = models.CharField(max_length=100, choices=kind_choices)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="accounts")
-    initial_balance = models.FloatField(default=0)
+    initial_balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 
     @property
     def balance(self):
