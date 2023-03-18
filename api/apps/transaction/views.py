@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pandas as pd
 from requests import Request
 from pandera.errors import SchemaError
@@ -9,7 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from api.apps.account.models import Account
 
 from .models import Transaction
-from .df_helpers import schema
+from .df_helpers import validate_df
 from .serializers import TransactionSerializer
 
 
@@ -25,35 +27,36 @@ class TransactionList(generics.ListCreateAPIView):
 
     # TODO: Don't hardcode currency
     def post(self, request, *args, **kwargs):
-        df = pd.read_csv(request.data["file"], header=None)
+        if "file" in request.data:
+            df = pd.read_csv(request.data["file"], header=None)
 
-        if len(df.columns) != 5:
-            raise APIException("Only unaltered TD statements are accepted")
+            try:
+                df = df.pipe(validate_df)
+            except (pd.errors.OutOfBoundsDatetime, SchemaError):
+                raise APIException(
+                    "Only unaltered TD statements are accepted at this time"
+                )
 
-        df.columns = ["date", "description", "withdrawal", "deposit", "new_balance"]
-        df[["withdrawal", "deposit", "new_balance"]] = df[
-            ["withdrawal", "deposit", "new_balance"]
-        ].fillna(value=0)
+            df["currency_code"] = "CAD"
+            df["account"] = self.kwargs.get("aid")
+            df["amount"] = df["deposit"] - df["withdrawal"]
+            df["user"] = self.request.user.id
+            df["date"] = df["date"].dt.date
+            df = df.drop(columns=["withdrawal", "deposit", "new_balance"])
 
-        try:
-            df["date"] = pd.to_datetime(df["date"], infer_datetime_format=True)
-        except pd.errors.OutOfBoundsDatetime:
-            raise APIException("Unable to parse the date column")
+            transaction_list = df.to_dict(orient="records")
+            transaction_req = Request(data=transaction_list)
 
-        try:
-            schema.validate(df)
-        except SchemaError as e:
-            raise APIException(e)
+        else:
+            transaction = request.data
+            transaction["currency_code"] = "CAD"
+            transaction["description"] = "manual_balance_update"
+            transaction["account"] = self.kwargs.get("aid")
+            transaction["date"] = datetime.today().strftime("%Y-%m-%d")
+            transaction["user"] = self.request.user.id
 
-        df["currency_code"] = "CAD"
-        df["account"] = self.kwargs.get("aid")
-        df["amount"] = df["deposit"] - df["withdrawal"]
-        df["user"] = self.request.user.id
-        df["date"] = df["date"].dt.date
-        df = df.drop(columns=["withdrawal", "deposit", "new_balance"])
+            transaction_req = Request(data=transaction)
 
-        transaction_list = df.to_dict(orient="records")
-        transaction_req = Request(data=transaction_list)
         return super(TransactionList, self).post(transaction_req, *args, **kwargs)
 
     def get_serializer(self, *args, **kwargs):
