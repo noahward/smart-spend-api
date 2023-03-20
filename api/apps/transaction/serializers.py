@@ -34,6 +34,7 @@ class TransactionSerializer(serializers.ModelSerializer):
             "description",
             "currency_code",
             "amount",
+            "date_classified",
             "user",
             "account",
             "category",
