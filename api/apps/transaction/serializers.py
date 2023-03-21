@@ -18,9 +18,6 @@ class BulkCreateListSerializer(serializers.ListSerializer):
 
 
 class TransactionSerializer(serializers.ModelSerializer):
-    category_name = serializers.CharField(source="category.name")
-    category_detailed_name = serializers.CharField(source="category.detailed_name")
-
     def create(self, validated_data):
         instance = Transaction(**validated_data)
 
@@ -40,6 +37,7 @@ class TransactionSerializer(serializers.ModelSerializer):
             "date_classified",
             "user",
             "account",
+            "category",
             "category_name",
             "category_detailed_name",
         ]

@@ -25,5 +25,13 @@ class Transaction(models.Model):
         related_name="transactions",
     )
 
+    @property
+    def category_name(self):
+        return self.category.name
+
+    @property
+    def category_detailed_name(self):
+        return self.category.detailed_name
+
     def __str__(self):
         return str(self.id)
