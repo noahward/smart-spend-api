@@ -9,6 +9,7 @@ from rest_framework.exceptions import APIException
 from rest_framework.permissions import IsAuthenticated
 
 from api.apps.account.models import Account
+from api.apps.user.permissions import IsOwner
 
 from .models import Transaction
 from .df_helpers import validate_df
@@ -66,4 +67,17 @@ class TransactionList(generics.ListCreateAPIView):
 
 
 class TransactionDetail(generics.RetrieveUpdateDestroyAPIView):
-    pass
+    model = Transaction
+    lookup_url_kwarg = "tid"
+    serializer_class = TransactionSerializer
+    permission_classes = [IsAuthenticated, IsOwner]
+
+    def get_queryset(self):
+        account = Account.objects.get(id=self.kwargs.get("aid"))
+        return Transaction.objects.filter(
+            Q(account=account) & Q(id=self.kwargs.get("tid"))
+        )
+
+    def patch(self, request, *args, **kwargs):
+        request.data["date_classified"] = datetime.now()
+        return super(TransactionDetail, self).partial_update(request, *args, **kwargs)
