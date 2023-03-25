@@ -50,3 +50,4 @@ venv
 # Developers
 *.sw*
 .DS_Store
+.vscode
