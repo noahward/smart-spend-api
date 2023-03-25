@@ -1,3 +1,4 @@
+coverage==7.2.2
 Django==4.1.7
 django_environ==0.9.0
 django_rest_knox==4.2.0
@@ -8,3 +9,4 @@ setuptools==65.7.0
 mysqlclient==2.1.1
 pandas==1.5.3
 pandera==0.14.3
+pytest==7.2.2
