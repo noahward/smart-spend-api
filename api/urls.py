@@ -31,8 +31,8 @@ urlpatterns = [
     path("auth/user", MainUser.as_view()),
     path("accounts", AccountList.as_view()),
     path("accounts/<int:aid>", AccountDetail.as_view()),
-    path("accounts/<int:aid>/transactions", TransactionList.as_view()),
-    path("accounts/<int:aid>/transactions/<int:tid>", TransactionDetail.as_view()),
+    path("transactions", TransactionList.as_view()),
+    path("transactions/<int:tid>", TransactionDetail.as_view()),
     path("categories", CategoryList.as_view()),
     path("categories/<int:cid>", CategoryDetail.as_view()),
 ]
