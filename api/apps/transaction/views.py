@@ -4,11 +4,9 @@ import pandas as pd
 from requests import Request
 from pandera.errors import SchemaError
 from rest_framework import generics
-from django.db.models import Q
 from rest_framework.exceptions import APIException
 from rest_framework.permissions import IsAuthenticated
 
-from api.apps.account.models import Account
 from api.apps.user.permissions import IsOwner
 
 from .models import Transaction
@@ -23,11 +21,11 @@ class TransactionList(generics.ListCreateAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        account = Account.objects.get(id=self.kwargs.get("aid"))
-        return Transaction.objects.filter(Q(user=user) & Q(account=account))
+        return Transaction.objects.filter(user=user)
 
     # TODO: Don't hardcode currency
     def post(self, request, *args, **kwargs):
+        account_id = request.data["account_id"]
         if "file" in request.data:
             df = pd.read_csv(request.data["file"], header=None)
 
@@ -39,7 +37,7 @@ class TransactionList(generics.ListCreateAPIView):
                 )
 
             df["currency_code"] = "CAD"
-            df["account"] = self.kwargs.get("aid")
+            df["account"] = account_id
             df["amount"] = df["deposit"] - df["withdrawal"]
             df["user"] = self.request.user.id
             df["date"] = df["date"].dt.date
@@ -52,7 +50,7 @@ class TransactionList(generics.ListCreateAPIView):
             transaction = request.data
             transaction["currency_code"] = "CAD"
             transaction["description"] = "manual_balance_update"
-            transaction["account"] = self.kwargs.get("aid")
+            transaction["account"] = account_id
             transaction["date"] = datetime.today().strftime("%Y-%m-%d")
             transaction["user"] = self.request.user.id
 
@@ -73,10 +71,7 @@ class TransactionDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated, IsOwner]
 
     def get_queryset(self):
-        account = Account.objects.get(id=self.kwargs.get("aid"))
-        return Transaction.objects.filter(
-            Q(account=account) & Q(id=self.kwargs.get("tid"))
-        )
+        return Transaction.objects.filter(id=self.kwargs.get("tid"))
 
     def patch(self, request, *args, **kwargs):
         request.data["date_classified"] = datetime.now()
