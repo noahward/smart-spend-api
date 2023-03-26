@@ -7,7 +7,7 @@ from api.apps.account.models import Account
 from api.apps.account.serializers import AccountSerializer
 
 
-class AccountViewsTests(APITestCase):
+class AccountViewsSerializerTests(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user(
             email="regular@user.com", password="foo", first_name="bar", last_name="baz"
@@ -28,6 +28,16 @@ class AccountViewsTests(APITestCase):
         self.assertTrue(
             Account.objects.filter(user=self.user, name="New Account").exists()
         )
+
+    def test_user_only_views_own_accounts(self):
+        another_user = User.objects.create_user(
+            email="another@user.com", password="foo", first_name="bar", last_name="baz"
+        )
+        Account.objects.create(user=another_user, name="Test Account")
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(reverse("accounts"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 0)
 
     def test_unauthenticated_user_cannot_access_view(self):
         response = self.client.get(reverse("accounts"))
