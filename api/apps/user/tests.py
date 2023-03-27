@@ -123,9 +123,22 @@ class UserViewsTests(APITestCase):
 
 
 class UserSerializerTests(APITestCase):
-    def test_contains_expected_fields(self):
+    def test_contains_instance_expected_fields(self):
         user = UserFactory()
         serializer = UserSerializer(instance=user)
         data = serializer.data
         self.assertEqual(list(data.keys()), ["id", "email", "first_name", "last_name"])
         self.assertEqual(data["email"], user.email)
+
+    def test_contains_data_expected_fields(self):
+        data = {
+            "email": "testuser@company.com",
+            "password": USER_PASSWORD,
+            "first_name": "first",
+            "last_name": "last",
+        }
+        serializer = UserSerializer(data=data)
+        self.assertTrue(serializer.is_valid())
+        self.assertEqual(serializer.data["email"], data["email"])
+        self.assertEqual(serializer.data["first_name"], data["first_name"])
+        self.assertEqual(serializer.data["last_name"], data["last_name"])
