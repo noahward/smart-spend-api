@@ -1,6 +1,7 @@
 import factory
 
 from api.apps.user.models import User
+from api.apps.account.models import Account
 
 USER_PASSWORD = "password"
 
@@ -16,3 +17,14 @@ class UserFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = User
+
+
+class AccountFactory(factory.django.DjangoModelFactory):
+    name = factory.Faker("sentence", nb_words=2)
+    nickname = factory.Faker("sentence", nb_words=4)
+    initial_balance = 100
+    kind = "saving"
+    user = factory.SubFactory(UserFactory)
+
+    class Meta:
+        model = Account
