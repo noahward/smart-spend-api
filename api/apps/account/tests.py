@@ -8,27 +8,28 @@ from api.apps.account.serializers import AccountSerializer
 
 
 class AccountViewsTests(APITestCase):
+    def setUp(self):
+        self.user = UserFactory()
+
     def test_authenticated_user_can_list_own_accounts(self):
-        user = UserFactory()
-        account = AccountFactory(user=user)
-        self.client.force_authenticate(user=user)
+        account = AccountFactory(user=self.user)
+        self.client.force_authenticate(user=self.user)
         response = self.client.get(reverse("accounts"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data[0]["name"], account.name)
 
     def test_authenticated_user_can_create_new_account(self):
-        user = UserFactory()
         data = {"name": "New Account", "kind": "spending"}
-        self.client.force_authenticate(user=user)
+        self.client.force_authenticate(user=self.user)
         response = self.client.post(reverse("accounts"), data=data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertTrue(Account.objects.filter(user=user, name=data["name"]).exists())
+        self.assertTrue(
+            Account.objects.filter(user=self.user, name=data["name"]).exists()
+        )
 
     def test_user_only_views_own_accounts(self):
-        user1 = UserFactory()
-        user2 = UserFactory()
-        AccountFactory(user=user1)
-        self.client.force_authenticate(user=user2)
+        AccountFactory()
+        self.client.force_authenticate(user=self.user)
         response = self.client.get(reverse("accounts"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 0)
@@ -38,16 +39,14 @@ class AccountViewsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_user_cannot_access_nonexistent_account(self):
-        user = UserFactory()
-        self.client.force_authenticate(user=user)
+        self.client.force_authenticate(user=self.user)
         response = self.client.get(reverse("account", kwargs={"aid": 1}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_update_existing_account(self):
-        user = UserFactory()
-        account = AccountFactory(user=user)
+        account = AccountFactory(user=self.user)
         data = {"name": "Updated Name"}
-        self.client.force_authenticate(user=user)
+        self.client.force_authenticate(user=self.user)
         response = self.client.patch(
             reverse("account", kwargs={"aid": account.id}), data
         )
@@ -56,10 +55,9 @@ class AccountViewsTests(APITestCase):
         self.assertEqual(response.data["nickname"], account.nickname)
 
     def test_update_account_with_invalid_data(self):
-        user = UserFactory()
-        account = AccountFactory(user=user)
         data = {"name": ""}
-        self.client.force_authenticate(user=user)
+        account = AccountFactory(user=self.user)
+        self.client.force_authenticate(user=self.user)
         response = self.client.patch(
             reverse("account", kwargs={"aid": account.id}), data
         )
@@ -67,17 +65,15 @@ class AccountViewsTests(APITestCase):
         self.assertIn("name", response.data)
 
     def test_delete_existing_account(self):
-        user = UserFactory()
-        account = AccountFactory(user=user)
+        account = AccountFactory(user=self.user)
         self.assertEqual(Account.objects.count(), 1)
-        self.client.force_authenticate(user=user)
+        self.client.force_authenticate(user=self.user)
         response = self.client.delete(reverse("account", kwargs={"aid": account.id}))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Account.objects.count(), 0)
 
     def test_delete_non_existing_account(self):
-        user = UserFactory()
-        self.client.force_authenticate(user=user)
+        self.client.force_authenticate(user=self.user)
         response = self.client.delete(reverse("account", kwargs={"aid": 1}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
