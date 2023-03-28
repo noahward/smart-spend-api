@@ -2,6 +2,7 @@ import factory
 
 from api.apps.user.models import User
 from api.apps.account.models import Account
+from api.apps.category.models import Category
 
 USER_PASSWORD = "password"
 
@@ -28,3 +29,12 @@ class AccountFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Account
+
+
+class CategoryFactory(factory.django.DjangoModelFactory):
+    name = factory.Faker("sentence", nb_words=2)
+    detailed_name = factory.Faker("sentence", nb_words=3)
+    user = factory.SubFactory(UserFactory)
+
+    class Meta:
+        model = Category
