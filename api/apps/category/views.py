@@ -27,7 +27,7 @@ class CategoryList(generics.ListCreateAPIView):
 
 
 class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
-    model = Category
+    queryset = Category.objects.all()
     lookup_url_kwarg = "cid"
     serializer_class = CategorySerializer
     permission_classes = [IsAuthenticated, IsOwner]
