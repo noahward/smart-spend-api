@@ -10,3 +10,4 @@ mysqlclient==2.1.1
 pandas==1.5.3
 pandera==0.14.3
 pytest==7.2.2
+sentry_sdk==1.18.0
