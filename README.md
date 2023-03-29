@@ -1,8 +1,8 @@
-# Budget Buddy
+# SmartSpend
 
-Track and categorize your spending, set monthly budgeting goals, and receive insights into how to better manage your money.
+Spend smarter, not harder. Track and categorize your spending, set budgeting goals, and receive insights into how to better manage your money.
 
-This ```README.md``` serves as the documentation for both the Budget Buddy API and the [Budget Buddy UI](https://github.com/noahward/budget-buddy-ui).
+This ```README.md``` serves as the documentation for both the SmartSpend API and the [SmartSpend UI](https://github.com/noahward/smart-spend-ui).
 
 
 
@@ -10,8 +10,7 @@ This ```README.md``` serves as the documentation for both the Budget Buddy API a
 
 - Create an account secured by token authentication
 - Add your spending/saving accounts and upload transactions to them
-- Categorize your transactions
-- Utilize the default categories or create your own
+- Categorize your transactions by utilizing the default categories or creating your own
 - Develop a budget to fit your needs and allocate funds to areas of spending
 - Receive insights into your spending habits through an intuitive dashboard
 
@@ -25,7 +24,7 @@ You may choose to run the API and not the UI depending on your development needs
 #### API Setup
 
 ```bash
-  git clone https://github.com/noahward/budget-buddy-api.git
+  git clone https://github.com/noahward/smart-spend-api.git
   
   cd budget-buddy-api           # Navigate to the project 
   pip install tox               # Install tox globally
@@ -34,28 +33,20 @@ You may choose to run the API and not the UI depending on your development needs
   python manage.py runserver    # Run the server
 ```
 
+Environment variable template: ```.env.dist``` serves as a template for the required API environment variables.
+
+Create either a ```.env.dev``` or a ```.env.prod``` file and populate it.
+
 #### UI Setup
 
 ```bash
-  git clone https://github.com/noahward/budget-buddy-ui.git
+  git clone https://github.com/noahward/smart-spend-ui.git
 
   cd budget-buddy-ui            # Navigate to the project
   npm install                   # Install dependencies
   quasar dev                    # Run the development server
 ```
 
-
-## Environment Variables
-
-#### API
-
-Template: ```.env.dist``` serves as a template for the required API environment variables.
-
-Create either a ```.env.dev``` or a ```.env.prod``` file and populate it.
-
-
-#### UI
-
-Template: ```.env.development```
+Environment variable template: ```.env.development```
 
 Create either a ```.env.development.local``` or a ```.env.production.local``` file and populate it.
