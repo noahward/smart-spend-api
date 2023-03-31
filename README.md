@@ -26,7 +26,7 @@ You may choose to run the API and not the UI depending on your development needs
 ```bash
   git clone https://github.com/noahward/smart-spend-api.git
   
-  cd budget-buddy-api           # Navigate to the project 
+  cd smart-spend-api            # Navigate to the project 
   pip install tox               # Install tox globally
   tox -e dev                    # Create a development environment using tox
   .\venv\Scripts\activate       # Activate the virtual environment
@@ -42,7 +42,7 @@ Create either a ```.env.dev``` or a ```.env.prod``` file and populate it.
 ```bash
   git clone https://github.com/noahward/smart-spend-ui.git
 
-  cd budget-buddy-ui            # Navigate to the project
+  cd smart-spend-ui             # Navigate to the project
   npm install                   # Install dependencies
   quasar dev                    # Run the development server
 ```
