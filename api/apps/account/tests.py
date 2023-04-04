@@ -52,7 +52,6 @@ class AccountViewsTests(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], data["name"])
-        self.assertEqual(response.data["nickname"], account.nickname)
 
     def test_update_account_with_invalid_data(self):
         data = {"name": ""}
@@ -85,7 +84,7 @@ class AccountSerializerTests(APITestCase):
         data = serializer.data
         self.assertEqual(
             list(data.keys()),
-            ["id", "name", "nickname", "kind", "balance", "initial_balance"],
+            ["id", "name", "kind", "balance", "initial_balance"],
         )
         self.assertEqual(data["name"], account.name)
 
