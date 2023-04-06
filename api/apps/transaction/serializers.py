@@ -37,8 +37,8 @@ class TransactionSerializer(serializers.ModelSerializer):
             "date_classified",
             "user",
             "account",
+            "account_name",
             "category",
             "category_name",
-            "category_detailed_name",
         ]
         list_serializer_class = BulkCreateListSerializer

@@ -26,6 +26,10 @@ class Transaction(models.Model):
     )
 
     @property
+    def account_name(self):
+        return self.account.name
+
+    @property
     def category_name(self):
         return self.category.name
 
