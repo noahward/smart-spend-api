@@ -43,5 +43,6 @@ class TransactionDetail(generics.RetrieveUpdateDestroyAPIView):
         return Transaction.objects.filter(id=self.kwargs.get("tid"))
 
     def patch(self, request, *args, **kwargs):
-        request.data["date_classified"] = datetime.now()
+        if request.data["category"]:
+            request.data["date_classified"] = datetime.now()
         return super(TransactionDetail, self).partial_update(request, *args, **kwargs)
