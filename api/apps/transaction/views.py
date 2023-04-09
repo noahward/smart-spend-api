@@ -1,8 +1,12 @@
+import codecs
 from datetime import datetime
 
+from ofxparse import OfxParser
 from requests import Request
-from rest_framework import generics
+from rest_framework import status, generics
 from django.utils.dateparse import parse_date
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 
 from api.apps.user.permissions import IsOwner
@@ -46,3 +50,29 @@ class TransactionDetail(generics.RetrieveUpdateDestroyAPIView):
         if request.data["category"]:
             request.data["date_classified"] = datetime.now()
         return super(TransactionDetail, self).partial_update(request, *args, **kwargs)
+
+
+@api_view(["POST"])
+def preview_transaction_file(request):
+    f = request.data["file"]
+
+    with codecs.EncodedFile(f, "utf-8") as fileobj:
+        ofx = OfxParser.parse(fileobj)
+
+    response_data = []
+
+    for account in ofx.accounts:
+        transaction_list = account.statement.transactions
+        account_data = {"kind": account.account_type, "transactions": []}
+        for transaction in transaction_list:
+            account_data["transactions"].append(
+                {
+                    "date": transaction.date,
+                    "amount": transaction.amount,
+                    "description": transaction.payee,
+                    "currency_code": account.statement.currency,
+                }
+            )
+        response_data.append(account_data)
+
+    return Response(response_data, status=status.HTTP_200_OK)

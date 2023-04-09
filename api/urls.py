@@ -20,7 +20,11 @@ from django.contrib import admin
 from api.apps.user.views import MainUser, LoginView, RegisterView
 from api.apps.account.views import AccountList, AccountDetail
 from api.apps.category.views import CategoryList, CategoryDetail
-from api.apps.transaction.views import TransactionList, TransactionDetail
+from api.apps.transaction.views import (
+    TransactionList,
+    TransactionDetail,
+    preview_transaction_file,
+)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -32,6 +36,9 @@ urlpatterns = [
     path("accounts", AccountList.as_view(), name="accounts"),
     path("accounts/<int:aid>", AccountDetail.as_view(), name="account"),
     path("transactions", TransactionList.as_view(), name="transactions"),
+    path(
+        "transaction-preview", preview_transaction_file, name="transaction-file-preview"
+    ),
     path("transactions/<int:tid>", TransactionDetail.as_view(), name="transaction"),
     path("categories", CategoryList.as_view(), name="categories"),
     path("categories/<int:cid>", CategoryDetail.as_view(), name="category"),

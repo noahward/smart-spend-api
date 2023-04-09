@@ -5,6 +5,7 @@ django_rest_knox==4.2.0
 djangorestframework==3.14.0
 environ==1.0
 knox==0.1.14
+ofxparse==0.21
 setuptools==65.7.0
 mysqlclient==2.1.1
 pandas==1.5.3
