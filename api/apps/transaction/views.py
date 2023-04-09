@@ -60,7 +60,6 @@ def preview_transaction_file(request):
         ofx = OfxParser.parse(fileobj)
 
     response_data = []
-
     for account in ofx.accounts:
         transaction_list = account.statement.transactions
         account_data = {"kind": account.account_type, "transactions": []}
