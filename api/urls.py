@@ -23,6 +23,7 @@ from api.apps.category.views import CategoryList, CategoryDetail
 from api.apps.transaction.views import (
     TransactionList,
     TransactionDetail,
+    TransactionFileUpload,
     preview_transaction_file,
 )
 
@@ -37,7 +38,14 @@ urlpatterns = [
     path("accounts/<int:aid>", AccountDetail.as_view(), name="account"),
     path("transactions", TransactionList.as_view(), name="transactions"),
     path(
-        "transaction-preview", preview_transaction_file, name="transaction-file-preview"
+        "transaction-file-preview",
+        preview_transaction_file,
+        name="transaction-file-preview",
+    ),
+    path(
+        "transaction-file-upload",
+        TransactionFileUpload.as_view(),
+        name="transaction-file-upload",
     ),
     path("transactions/<int:tid>", TransactionDetail.as_view(), name="transaction"),
     path("categories", CategoryList.as_view(), name="categories"),

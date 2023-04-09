@@ -1,3 +1,4 @@
+import json
 import codecs
 from datetime import datetime
 
@@ -12,6 +13,7 @@ from rest_framework.permissions import IsAuthenticated
 from api.apps.user.permissions import IsOwner
 
 from .models import Transaction
+from .helpers import process_transaction_file
 from .serializers import TransactionSerializer
 
 
@@ -52,26 +54,41 @@ class TransactionDetail(generics.RetrieveUpdateDestroyAPIView):
         return super(TransactionDetail, self).partial_update(request, *args, **kwargs)
 
 
+class TransactionFileUpload(generics.CreateAPIView):
+    model = Transaction
+    serializer_class = TransactionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_serializer(self, *args, **kwargs):
+        if isinstance(kwargs.get("data", {}), list):
+            kwargs["many"] = True
+        return super(TransactionFileUpload, self).get_serializer(*args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        transaction_file = request.FILES["file"]
+        account_map = json.loads(request.POST["map"])
+
+        with codecs.EncodedFile(transaction_file, "utf-8") as fileobj:
+            ofx = OfxParser.parse(fileobj)
+
+        transaction_data = process_transaction_file(ofx, account_map, request.user.id)
+
+        transaction_list = []
+        for account in transaction_data:
+            transaction_list.extend(account["transactions"])
+
+        transaction_req = Request(data=transaction_list)
+
+        return super(TransactionFileUpload, self).post(transaction_req, *args, **kwargs)
+
+
 @api_view(["POST"])
 def preview_transaction_file(request):
-    f = request.data["file"]
+    transaction_file = request.data["file"]
 
-    with codecs.EncodedFile(f, "utf-8") as fileobj:
+    with codecs.EncodedFile(transaction_file, "utf-8") as fileobj:
         ofx = OfxParser.parse(fileobj)
 
-    response_data = []
-    for account in ofx.accounts:
-        transaction_list = account.statement.transactions
-        account_data = {"kind": account.account_type, "transactions": []}
-        for transaction in transaction_list:
-            account_data["transactions"].append(
-                {
-                    "date": transaction.date,
-                    "amount": transaction.amount,
-                    "description": transaction.payee,
-                    "currency_code": account.statement.currency,
-                }
-            )
-        response_data.append(account_data)
+    response_data = process_transaction_file(ofx)
 
     return Response(response_data, status=status.HTTP_200_OK)
