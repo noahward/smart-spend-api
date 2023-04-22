@@ -13,7 +13,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
-    "knox",
+    "rest_framework.authtoken",
+    "djoser",
     "corsheaders",
     "api.apps.user",
     "api.apps.transaction",
@@ -88,14 +89,11 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "user.User"
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": ("knox.auth.TokenAuthentication",),
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.TokenAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "COERCE_DECIMAL_TO_STRING": False,
 }
 
-REST_KNOX = {
-    "USER_SERIALIZER": "user.serializers.UserSerializer",
-    "TOKEN_TTL": timedelta(hours=1),
-    "TOKEN_LIMIT_PER_USER": 1,
-    "AUTO_REFRESH": True,
-    "MIN_REFRESH_INTERVAL": 60,
-}
+DJOSER = {"USER_ID_FIELD": "email"}
