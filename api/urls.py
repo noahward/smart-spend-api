@@ -16,6 +16,7 @@ Including another URLconf
 from django.urls import path
 from django.contrib import admin
 
+from api.apps.user.urls import user_urls
 from api.apps.account.views import AccountList, AccountDetail
 from api.apps.category.views import CategoryList, CategoryDetail
 from api.apps.transaction.views import (
@@ -44,3 +45,5 @@ urlpatterns = [
     path("categories", CategoryList.as_view(), name="categories"),
     path("categories/<int:cid>", CategoryDetail.as_view(), name="category"),
 ]
+
+urlpatterns += user_urls
