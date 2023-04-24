@@ -96,4 +96,9 @@ REST_FRAMEWORK = {
     "COERCE_DECIMAL_TO_STRING": False,
 }
 
-DJOSER = {"USER_ID_FIELD": "email"}
+DJOSER = {
+    "USER_ID_FIELD": "email",
+    "LOGIN_FIELD": "email",
+    "SERIALIZERS": {"token": "api.apps.user.serializers.CustomTokenSerializer"},
+    "PERMISSIONS": {"user_list": ["rest_framework.permissions.IsAdminUser"]},
+}
