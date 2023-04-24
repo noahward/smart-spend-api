@@ -99,6 +99,8 @@ REST_FRAMEWORK = {
 DJOSER = {
     "USER_ID_FIELD": "email",
     "LOGIN_FIELD": "email",
+    "SEND_ACTIVATION_EMAIL": True,
+    "ACTIVATION_URL": "api/v1/auth/users/activate/{uid}/{token}",
     "SERIALIZERS": {"token": "api.apps.user.serializers.CustomTokenSerializer"},
     "PERMISSIONS": {"user_list": ["rest_framework.permissions.IsAdminUser"]},
 }
