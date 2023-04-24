@@ -101,6 +101,7 @@ DJOSER = {
     "LOGIN_FIELD": "email",
     "SEND_ACTIVATION_EMAIL": True,
     "ACTIVATION_URL": "api/v1/auth/users/activate/{uid}/{token}",
+    "PASSWORD_RESET_CONFIRM_URL": "api/v1/auth/users/password_reset/{uid}/{token}",
     "SERIALIZERS": {"token": "api.apps.user.serializers.CustomTokenSerializer"},
     "PERMISSIONS": {"user_list": ["rest_framework.permissions.IsAdminUser"]},
 }
