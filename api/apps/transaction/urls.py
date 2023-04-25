@@ -10,7 +10,7 @@ from .views import (
 transaction_urls = [
     path("api/v1/transactions/", TransactionList.as_view(), name="transaction-list"),
     path(
-        "api/v1/transactions/<int:tid>/",
+        "api/v1/transactions/<int:pk>/",
         TransactionDetail.as_view(),
         name="transaction-detail",
     ),

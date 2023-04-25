@@ -41,7 +41,6 @@ class TransactionList(generics.ListCreateAPIView):
 
 class TransactionDetail(generics.RetrieveUpdateDestroyAPIView):
     model = Transaction
-    lookup_url_kwarg = "tid"
     serializer_class = TransactionSerializer
     permission_classes = [IsAuthenticated, IsOwner]
 
