@@ -3,7 +3,7 @@ from django.contrib import admin
 
 from api.apps.user.urls import user_urls
 from api.apps.account.urls import account_urls
-from api.apps.category.views import CategoryList, CategoryDetail
+from api.apps.category.views import category_urls
 from api.apps.transaction.views import (
     TransactionList,
     TransactionDetail,
@@ -25,9 +25,8 @@ urlpatterns = [
         name="transaction-file-upload",
     ),
     path("transactions/<int:tid>", TransactionDetail.as_view(), name="transaction"),
-    path("categories", CategoryList.as_view(), name="categories"),
-    path("categories/<int:cid>", CategoryDetail.as_view(), name="category"),
 ]
 
 urlpatterns += user_urls
 urlpatterns += account_urls
+urlpatterns += category_urls
