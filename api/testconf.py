@@ -1,8 +1,12 @@
+import random
+import datetime
+
 import factory
 
 from api.apps.user.models import User
 from api.apps.account.models import Account
 from api.apps.category.models import Category
+from api.apps.transaction.models import Transaction
 
 USER_PASSWORD = "password"
 
@@ -37,3 +41,15 @@ class CategoryFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Category
+
+
+class TransactionFactory(factory.django.DjangoModelFactory):
+    date = factory.LazyFunction(datetime.date.today)
+    description = factory.Faker("catch_phrase")
+    currency_code = factory.Iterator(["USD", "CAD", "MXN"])
+    amount = round(random.uniform(-1_000_000_000.00, 1_000_000_000.00), 2)
+    user = factory.SubFactory(UserFactory)
+    account = factory.SubFactory(AccountFactory)
+
+    class Meta:
+        model = Transaction
