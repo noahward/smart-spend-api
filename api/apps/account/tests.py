@@ -14,14 +14,14 @@ class AccountViewsTests(APITestCase):
     def test_authenticated_user_can_list_own_accounts(self):
         account = AccountFactory(user=self.user)
         self.client.force_authenticate(user=self.user)
-        response = self.client.get(reverse("accounts"))
+        response = self.client.get(reverse("accounts-list"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data[0]["name"], account.name)
 
     def test_authenticated_user_can_create_new_account(self):
         data = {"name": "New Account", "kind": "spending"}
         self.client.force_authenticate(user=self.user)
-        response = self.client.post(reverse("accounts"), data=data)
+        response = self.client.post(reverse("accounts-list"), data=data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(
             Account.objects.filter(user=self.user, name=data["name"]).exists()
@@ -30,17 +30,17 @@ class AccountViewsTests(APITestCase):
     def test_user_only_views_own_accounts(self):
         AccountFactory()
         self.client.force_authenticate(user=self.user)
-        response = self.client.get(reverse("accounts"))
+        response = self.client.get(reverse("accounts-list"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 0)
 
     def test_unauthenticated_user_cannot_access_view(self):
-        response = self.client.get(reverse("accounts"))
+        response = self.client.get(reverse("accounts-list"))
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_user_cannot_access_nonexistent_account(self):
         self.client.force_authenticate(user=self.user)
-        response = self.client.get(reverse("account", kwargs={"aid": 1}))
+        response = self.client.get(reverse("accounts-detail", kwargs={"pk": 1}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_update_existing_account(self):
@@ -48,7 +48,7 @@ class AccountViewsTests(APITestCase):
         data = {"name": "Updated Name"}
         self.client.force_authenticate(user=self.user)
         response = self.client.patch(
-            reverse("account", kwargs={"aid": account.id}), data
+            reverse("accounts-detail", kwargs={"pk": account.id}), data
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], data["name"])
@@ -58,7 +58,7 @@ class AccountViewsTests(APITestCase):
         account = AccountFactory(user=self.user)
         self.client.force_authenticate(user=self.user)
         response = self.client.patch(
-            reverse("account", kwargs={"aid": account.id}), data
+            reverse("accounts-detail", kwargs={"pk": account.id}), data
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("name", response.data)
@@ -67,13 +67,15 @@ class AccountViewsTests(APITestCase):
         account = AccountFactory(user=self.user)
         self.assertEqual(Account.objects.count(), 1)
         self.client.force_authenticate(user=self.user)
-        response = self.client.delete(reverse("account", kwargs={"aid": account.id}))
+        response = self.client.delete(
+            reverse("accounts-detail", kwargs={"pk": account.id})
+        )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Account.objects.count(), 0)
 
     def test_delete_non_existing_account(self):
         self.client.force_authenticate(user=self.user)
-        response = self.client.delete(reverse("account", kwargs={"aid": 1}))
+        response = self.client.delete(reverse("accounts-detail", kwargs={"pk": 1}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 

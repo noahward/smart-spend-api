@@ -36,7 +36,6 @@ class AccountFactory(factory.django.DjangoModelFactory):
 
 class CategoryFactory(factory.django.DjangoModelFactory):
     name = factory.Faker("sentence", nb_words=2)
-    detailed_name = factory.Faker("sentence", nb_words=3)
     user = factory.SubFactory(UserFactory)
 
     class Meta:
