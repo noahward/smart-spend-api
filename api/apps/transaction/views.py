@@ -5,7 +5,6 @@ from datetime import datetime
 from ofxparse import OfxParser
 from requests import Request
 from rest_framework import status, generics
-from django.utils.dateparse import parse_date
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
@@ -26,17 +25,8 @@ class TransactionList(generics.ListCreateAPIView):
         user = self.request.user
         return Transaction.objects.filter(user=user)
 
-    # TODO: Don't hardcode currency
-    # TODO: Handle file uploads
-    def post(self, request, *args, **kwargs):
-        transaction = request.data
-        transaction["currency_code"] = "CAD"
-        transaction["date"] = parse_date(transaction["date"])
-        transaction["user"] = self.request.user.id
-
-        transaction_req = Request(data=transaction)
-
-        return super(TransactionList, self).post(transaction_req, *args, **kwargs)
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class TransactionDetail(generics.RetrieveUpdateDestroyAPIView):
