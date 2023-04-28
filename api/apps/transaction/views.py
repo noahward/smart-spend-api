@@ -30,15 +30,12 @@ class TransactionList(generics.ListCreateAPIView):
 
 
 class TransactionDetail(generics.RetrieveUpdateDestroyAPIView):
-    model = Transaction
+    queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
     permission_classes = [IsAuthenticated, IsOwner]
 
-    def get_queryset(self):
-        return Transaction.objects.filter(id=self.kwargs.get("tid"))
-
     def patch(self, request, *args, **kwargs):
-        if request.data["category"]:
+        if "category" in request.data:
             request.data["date_classified"] = datetime.now()
         return super(TransactionDetail, self).partial_update(request, *args, **kwargs)
 
