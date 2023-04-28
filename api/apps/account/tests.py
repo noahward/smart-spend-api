@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from api.testconf import UserFactory, AccountFactory
+from api.testconf import UserFactory, AccountFactory, TransactionFactory
 from api.apps.account.models import Account
 from api.apps.account.serializers import AccountSerializer
 
@@ -78,6 +78,17 @@ class AccountViewsTests(APITestCase):
         response = self.client.delete(reverse("accounts-detail", kwargs={"pk": 1}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_balance_computes_sum_of_transactions(self):
+        account = AccountFactory(user=self.user, initial_balance=0)
+        transaction1 = TransactionFactory(user=self.user, account=account, amount=100)
+        transaction2 = TransactionFactory(user=self.user, account=account, amount=1.55)
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(reverse("accounts-list"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            float(account.balance), transaction1.amount + transaction2.amount
+        )
+
 
 class AccountSerializerTests(APITestCase):
     def test_contains_instance_expected_fields(self):
@@ -90,7 +101,7 @@ class AccountSerializerTests(APITestCase):
         )
         self.assertEqual(data["name"], account.name)
 
-    def test_contains_date_expected_fields(self):
+    def test_contains_data_expected_fields(self):
         data = {"name": "New Account", "kind": "spending"}
         serializer = AccountSerializer(data=data)
         self.assertTrue(serializer.is_valid())
