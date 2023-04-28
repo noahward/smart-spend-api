@@ -7,6 +7,7 @@ from rest_framework.test import APITestCase
 
 from api.testconf import UserFactory, AccountFactory, TransactionFactory
 from api.apps.transaction.models import Transaction
+from api.apps.transaction.serializers import TransactionSerializer
 
 
 class TransactionListDetailViewsTests(APITestCase):
@@ -88,3 +89,25 @@ class TransactionListDetailViewsTests(APITestCase):
         self.client.force_authenticate(user=self.user)
         response = self.client.delete(reverse("transaction-detail", kwargs={"pk": 1}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class TransactionSerializerTests(APITestCase):
+    def test_contains_instance_expected_fields(self):
+        transaction = TransactionFactory()
+        serializer = TransactionSerializer(instance=transaction)
+        data = serializer.data
+        self.assertEqual(
+            list(data.keys()),
+            [
+                "id",
+                "date",
+                "description",
+                "currency_code",
+                "amount",
+                "date_classified",
+                "account",
+                "account_name",
+                "category",
+            ],
+        )
+        self.assertEqual(data["description"], transaction.description)
