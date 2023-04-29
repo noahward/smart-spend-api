@@ -1,12 +1,13 @@
-import json
 import codecs
 from datetime import datetime
 
+import simplejson
 from ofxparse import OfxParser
 from requests import Request
 from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 
 from api.apps.user.permissions import IsOwner
@@ -55,7 +56,11 @@ class TransactionFileUpload(generics.CreateAPIView):
 
     def post(self, request, *args, **kwargs):
         transaction_file = request.FILES["file"]
-        account_map = json.loads(request.POST["map"])
+
+        try:
+            account_map = simplejson.loads(request.POST["map"], use_decimal=True)
+        except (simplejson.JSONDecodeError, UnicodeDecodeError):
+            raise ValidationError("Invalid account mapping")
 
         with codecs.EncodedFile(transaction_file, "utf-8") as fileobj:
             ofx = OfxParser.parse(fileobj)
