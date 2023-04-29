@@ -13,7 +13,7 @@ from rest_framework.permissions import IsAuthenticated
 from api.apps.user.permissions import IsOwner
 
 from .models import Transaction
-from .helpers import process_transaction_file
+from .helpers import validate_ofx_file, process_transaction_file
 from .serializers import TransactionSerializer
 
 
@@ -57,6 +57,8 @@ class TransactionFileUpload(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         transaction_file = request.FILES["file"]
 
+        validate_ofx_file(transaction_file)
+
         try:
             account_map = simplejson.loads(request.POST["map"], use_decimal=True)
         except (simplejson.JSONDecodeError, UnicodeDecodeError):
@@ -79,6 +81,8 @@ class TransactionFileUpload(generics.CreateAPIView):
 @api_view(["POST"])
 def preview_transaction_file(request):
     transaction_file = request.data["file"]
+
+    validate_ofx_file(transaction_file)
 
     with codecs.EncodedFile(transaction_file, "utf-8") as fileobj:
         ofx = OfxParser.parse(fileobj)
