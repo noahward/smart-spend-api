@@ -12,8 +12,11 @@ on:
 
 env:
   DJANGO_SETTINGS_MODULE: api.settings.test
-  SECRET_KEY: 8znaa_oa3re1y78wbhxtv&b%z&_*_wj78h%b%2r=-ddknf@tcs
-  
+
+secrets:
+  SECRET_KEY:
+    value: ${{ env.SECRET_KEY }}
+
 jobs:
   health-check:
     strategy:
