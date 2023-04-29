@@ -1,7 +1,7 @@
 from datetime import datetime
 
 
-def process_transaction_file(ofx_data, account_map=None, user_id=None):
+def process_transaction_file(ofx_data, account_map=None):
     parsed_data = []
     for account in ofx_data.accounts:
         transaction_list = account.statement.transactions
@@ -18,9 +18,6 @@ def process_transaction_file(ofx_data, account_map=None, user_id=None):
                 "description": transaction.payee,
                 "currency_code": account.statement.currency,
             }
-
-            if user_id:
-                transaction_data["user"] = user_id
             if account_map:
                 transaction_data["account"] = account_map[account.account_id]
 

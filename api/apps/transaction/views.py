@@ -50,6 +50,9 @@ class TransactionFileUpload(generics.CreateAPIView):
             kwargs["many"] = True
         return super(TransactionFileUpload, self).get_serializer(*args, **kwargs)
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
     def post(self, request, *args, **kwargs):
         transaction_file = request.FILES["file"]
         account_map = json.loads(request.POST["map"])
@@ -57,7 +60,7 @@ class TransactionFileUpload(generics.CreateAPIView):
         with codecs.EncodedFile(transaction_file, "utf-8") as fileobj:
             ofx = OfxParser.parse(fileobj)
 
-        transaction_data = process_transaction_file(ofx, account_map, request.user.id)
+        transaction_data = process_transaction_file(ofx, account_map)
 
         transaction_list = []
         for account in transaction_data:
