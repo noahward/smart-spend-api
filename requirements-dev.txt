@@ -6,3 +6,4 @@ black==22.3.0
 django-cors-headers==3.13.0
 factory-boy==3.2.1
 pytest-django==4.5.2
+factory-boy==3.2.1
