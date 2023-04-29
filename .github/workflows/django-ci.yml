@@ -12,10 +12,7 @@ on:
 
 env:
   DJANGO_SETTINGS_MODULE: api.settings.test
-
-secrets:
-  SECRET_KEY:
-    value: ${{ env.SECRET_KEY }}
+  SECRET_KEY: ${{ secrets.SECRET_KEY }}
 
 jobs:
   health-check:
