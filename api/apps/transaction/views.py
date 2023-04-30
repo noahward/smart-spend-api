@@ -3,12 +3,12 @@ import codecs
 from datetime import datetime
 
 from ofxparse import OfxParser
-from requests import Request
 from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 
+from api.apps.account.models import Account
 from api.apps.user.permissions import IsOwner
 
 from .models import Transaction
@@ -45,14 +45,6 @@ class TransactionFileUpload(generics.CreateAPIView):
     serializer_class = TransactionSerializer
     permission_classes = [IsAuthenticated]
 
-    def get_serializer(self, *args, **kwargs):
-        if isinstance(kwargs.get("data", {}), list):
-            kwargs["many"] = True
-        return super(TransactionFileUpload, self).get_serializer(*args, **kwargs)
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
     def post(self, request, *args, **kwargs):
         transaction_file = request.FILES["file"]
         account_map = json.loads(request.POST["map"])
@@ -66,9 +58,19 @@ class TransactionFileUpload(generics.CreateAPIView):
         for account in transaction_data:
             transaction_list.extend(account["transactions"])
 
-        transaction_req = Request(data=transaction_list)
+        objs = []
+        for item in transaction_list:
+            account_id = item.pop("account", None)
+            if account_id is not None:
+                account = Account.objects.get(pk=account_id)
+                item["account"] = account
+                item["user"] = request.user
+            obj = Transaction(**item)
+            obj.save()
+            objs.append(obj)
 
-        return super(TransactionFileUpload, self).post(transaction_req, *args, **kwargs)
+        serializer = TransactionSerializer(objs, many=True)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 @api_view(["POST"])
