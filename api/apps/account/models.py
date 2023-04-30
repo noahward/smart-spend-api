@@ -9,6 +9,7 @@ class Account(models.Model):
 
     name = models.CharField(max_length=100)
     kind = models.CharField(max_length=100, choices=kind_choices)
+    currency_code = models.CharField(max_length=3)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="accounts")
     initial_balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 
