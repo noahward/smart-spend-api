@@ -26,6 +26,7 @@ class UserFactory(factory.django.DjangoModelFactory):
 
 class AccountFactory(factory.django.DjangoModelFactory):
     name = factory.Faker("sentence", nb_words=2)
+    currency_code = factory.Iterator(["USD", "CAD", "MXN"])
     initial_balance = 100
     kind = "saving"
     user = factory.SubFactory(UserFactory)

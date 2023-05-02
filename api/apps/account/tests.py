@@ -19,7 +19,7 @@ class AccountViewsTests(APITestCase):
         self.assertEqual(response.data[0]["name"], account.name)
 
     def test_authenticated_user_can_create_new_account(self):
-        data = {"name": "New Account", "kind": "spending"}
+        data = {"name": "New Account", "currency_code": "CAD", "kind": "spending"}
         self.client.force_authenticate(user=self.user)
         response = self.client.post(reverse("accounts-list"), data=data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -97,12 +97,12 @@ class AccountSerializerTests(APITestCase):
         data = serializer.data
         self.assertEqual(
             list(data.keys()),
-            ["id", "name", "kind", "balance", "initial_balance"],
+            ["id", "name", "kind", "currency_code", "balance", "initial_balance"],
         )
         self.assertEqual(data["name"], account.name)
 
     def test_contains_data_expected_fields(self):
-        data = {"name": "New Account", "kind": "spending"}
+        data = {"name": "New Account", "currency_code": "CAD", "kind": "spending"}
         serializer = AccountSerializer(data=data)
         self.assertTrue(serializer.is_valid())
         self.assertEqual(serializer.data["name"], data["name"])
