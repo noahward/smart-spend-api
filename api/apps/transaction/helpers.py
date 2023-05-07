@@ -30,7 +30,9 @@ def process_transaction_file(ofx_data, account_map=None):
                 "currency_code": account.statement.currency,
             }
             if account_map:
-                transaction_data["account"] = account_map[account.account_id]
+                transaction_data["account"] = account_map[account.account_id][
+                    "target_account_id"
+                ]
 
             account_data["transactions"].append(transaction_data)
         parsed_data.append(account_data)
