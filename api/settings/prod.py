@@ -9,7 +9,7 @@ from sentry_sdk.integrations.logging import LoggingIntegration
 from .base import *
 
 # Environment variables
-env = environ.Env()
+env = environ.Env(USE_SENTRY=(bool, False))
 environ.Env.read_env(os.path.join(BASE_DIR, ".env.prod"))
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -19,13 +19,21 @@ DEBUG = False
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: define the correct hosts in production!
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [
+    "smart-spend.com",
+    "api.smart-spend.com",
+    "www.smart-spend.com",
+    "www.api.smart-spend.com",
+]
 
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+CORS_ALLOWED_ORIGINS = [
+    "https://smart-spend.com",
+    "https://www.smart-spend.com",
+]
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
+        "ENGINE": env("DB_ENGINE"),
         "NAME": env("DB_NAME"),
         "USER": env("DB_USER"),
         "PASSWORD": env("DB_PASSWORD"),
@@ -40,17 +48,18 @@ sentry_logging = LoggingIntegration(
     event_level=logging.ERROR,  # Send errors as events
 )
 
-sentry_sdk.init(
-    dsn=env("SENTRY_DSN"),
-    integrations=[
-        DjangoIntegration(
-            transaction_style="url",
-            middleware_spans=True,
-            signals_spans=False,
-        ),
-        sentry_logging,
-    ],
-    traces_sample_rate=1.0,
-    send_default_pii=True,
-    environment="production",
-)
+if env("USE_SENTRY"):
+    sentry_sdk.init(
+        dsn=env("SENTRY_DSN"),
+        integrations=[
+            DjangoIntegration(
+                transaction_style="url",
+                middleware_spans=True,
+                signals_spans=False,
+            ),
+            sentry_logging,
+        ],
+        traces_sample_rate=1.0,
+        send_default_pii=True,
+        environment="production",
+    )

@@ -3,14 +3,13 @@ import logging
 
 import environ
 import sentry_sdk
-from django.core.exceptions import ImproperlyConfigured
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import LoggingIntegration
 
 from .base import *
 
 # Environment variables
-env = environ.Env()
+env = environ.Env(USE_SENTRY=(bool, False))
 environ.Env.read_env(os.path.join(BASE_DIR, ".env.dev"))
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -22,11 +21,9 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: define the correct hosts in production!
 ALLOWED_HOSTS = ["*"]
 
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
+        "ENGINE": env("DB_ENGINE"),
         "NAME": env("DB_NAME"),
         "USER": env("DB_USER"),
         "PASSWORD": env("DB_PASSWORD"),
@@ -37,8 +34,7 @@ DATABASES = {
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-# Sentry logging
-try:
+if env("USE_SENTRY"):
     sentry_logging = LoggingIntegration(
         level=logging.DEBUG,  # Capture debug info and above as breadcrumbs
         event_level=logging.ERROR,  # Send errors as events
@@ -58,5 +54,3 @@ try:
         send_default_pii=True,
         environment="development",
     )
-except ImproperlyConfigured:
-    print("Sentry logging and reporting is disabled")

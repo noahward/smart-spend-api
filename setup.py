@@ -1,9 +1,9 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="app-name",
-    description="setup.py for app",
-    version="v2022.01.15",
+    name="SmartSpend",
+    description="setup.py for SmartSpend",
+    version="v2022.05.31",
     packages=find_packages(include=["api", "api.*"]),
     author="Noah Ward",
     install_requires=[],
