@@ -1,5 +1,4 @@
 from pathlib import Path
-from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -99,9 +98,11 @@ REST_FRAMEWORK = {
 DJOSER = {
     "USER_ID_FIELD": "email",
     "LOGIN_FIELD": "email",
-    "SEND_ACTIVATION_EMAIL": True,
+    "SEND_ACTIVATION_EMAIL": False,
     "ACTIVATION_URL": "api/v1/auth/users/activate/{uid}/{token}",
     "PASSWORD_RESET_CONFIRM_URL": "api/v1/auth/users/password_reset/{uid}/{token}",
-    "SERIALIZERS": {"token": "api.apps.user.serializers.CustomTokenSerializer"},
+    "SERIALIZERS": {
+        "token": "api.apps.user.serializers.CustomTokenSerializer",
+    },
     "PERMISSIONS": {"user_list": ["rest_framework.permissions.IsAdminUser"]},
 }
