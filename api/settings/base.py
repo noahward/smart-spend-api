@@ -56,16 +56,16 @@ WSGI_APPLICATION = "api.wsgi.application"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-    },
-    {
         "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
+    {
+        "NAME": "api.apps.user.password_validation.CustomUserAttributeSimilarityValidator",
+    },
+    {
+        "NAME": "api.apps.user.password_validation.CustomMinimumLengthValidator",
     },
 ]
 
@@ -105,4 +105,5 @@ DJOSER = {
         "token": "api.apps.user.serializers.CustomTokenSerializer",
     },
     "PERMISSIONS": {"user_list": ["rest_framework.permissions.IsAdminUser"]},
+    "CONSTANTS": {"messages": "api.constants.CustomMessages"},
 }
