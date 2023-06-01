@@ -31,6 +31,10 @@ CORS_ALLOWED_ORIGINS = [
     "https://www.smart-spend.com",
 ]
 
+SESSION_COOKIE_SECURE = True
+
+CSRF_COOKIE_SECURE = True
+
 DATABASES = {
     "default": {
         "ENGINE": env("DB_ENGINE"),
